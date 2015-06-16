@@ -15,3 +15,17 @@ length (varint64), which can be used in the calling context to provide feedback
 to the user. The parser further allows these varint64 streams to be concatenated.
 
 stream is used by [vg](https://github.com/ekg/vg) for data serialization.
+
+To use stream, you can modify the example in this library to match your protobuf schema,
+then modify main to include any processing functions you may want
+to execute against the protobuf streams.
+
+The stream library uses C++ `std::function`s to coordinate processing of the stream.
+A stream handler is passed a function and an iostream, then it reads the iostream as if
+it is a compressed protobuf stream, and applies the function it is passed to every element
+in the stream.
+
+Parallel stream handlers provide a simple mechanism for parallelization of streaming
+data processing. When parallel functions are written, you must use `openmp` compiler
+directives for coordination and process control (for instance, tagging output stanzas
+as `#pragma omp critical` ensures proper ordering of the output.
