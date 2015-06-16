@@ -2,12 +2,12 @@
 
 ## compressed protobuf streams
 
-stream.hpp (and friends in google/protobuf) enable stream processing of
-protobuf data. Problematically, the protobuf parser and libraries provide no
+Problematically, the protobuf parser and libraries provide no
 mechanism to stream very large protobuf objects. [Several solutions exist, some
 of which may be preferable](https://github.com/mafintosh/pbs).
 
-In this format, protobuf objects are prefixed by varints that describe their
+stream.hpp (and friends in google/protobuf) enable stream processing of
+protobuf data. In this format, protobuf objects are prefixed by varints that describe their
 size on the wire. This enables the parser to determine object boundaries
 without requiring a schema defining a meta-object that is a concatenation of
 the objects we want to stream. The entire stream is optionally prefixed by a
