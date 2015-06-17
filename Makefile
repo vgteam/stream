@@ -9,7 +9,7 @@ LDFLAGS=-L./ -Lprotobuf -lprotobuf -lz
 
 all: example
 
-$(LIBPROTOBUF): protobuf/src/google/protobuf/*cc  protobuf/src/google/protobuf/*h
+$(LIBPROTOBUF):
 	cd protobuf && mkdir -p build && ./autogen.sh && ./configure --prefix=`pwd`/build/ && $(MAKE) && $(MAKE) install
 	cp protobuf/build/lib/libprotobuf.a protobuf/
 
@@ -31,4 +31,5 @@ clean:
 	rm -rf cpp
 	rm -f example
 	rm -f *.o
-	cd protobuf && $(MAKE) clean && rm -rf build
+	rm -f test.stream
+	cd protobuf && $(MAKE) clean && rm -rf build && rm -f libprotobuf.a
