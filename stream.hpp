@@ -79,7 +79,7 @@ bool for_each(std::istream& in,
           new ::google::protobuf::io::CodedInputStream(gzip_in);
 
     uint64_t count;
-    coded_in->ReadVarint64(&count);
+    coded_in->ReadVarint64((::google::protobuf::uint64*) &count);
     // this loop handles a chunked file with many pieces
     // such as we might write in a multithreaded process
     if (!count) return !count;
@@ -101,7 +101,7 @@ bool for_each(std::istream& in,
                 lambda(object);
             }
         }
-    } while (coded_in->ReadVarint64(&count));
+    } while (coded_in->ReadVarint64((::google::protobuf::uint64*) &count));
 
     delete coded_in;
     delete gzip_in;
@@ -130,7 +130,7 @@ bool for_each_parallel(std::istream& in,
           new ::google::protobuf::io::CodedInputStream(gzip_in);
 
     uint64_t count;
-    bool more_input = coded_in->ReadVarint64(&count);
+    bool more_input = coded_in->ReadVarint64((::google::protobuf::uint64*) &count);
     bool more_objects = false;
     // this loop handles a chunked file with many pieces
     // such as we might write in a multithreaded process
@@ -178,7 +178,7 @@ bool for_each_parallel(std::istream& in,
                         }
                     }
                 }
-                more_input = coded_in->ReadVarint64(&count);
+                more_input = coded_in->ReadVarint64((::google::protobuf::uint64*) &count);
             }
         }
 #pragma omp critical (objects)
