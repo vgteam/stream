@@ -11,8 +11,10 @@ OBJ_DIR:=obj
 PROTO_PATH:=
 
 LIBS=cpp/example.pb.o main.o
-INCLUDES=-I./ -Icpp -I/usr/local/include
-LD_LIB_FLAGS=-L./ -L/usr/local/lib/ -lprotobuf -lz 
+INCLUDES=-I./ -Icpp -I/usr/local/include -I/usr/local/include/google/protobuf
+LD_LIB_FLAGS=-L./ -L/usr/local/lib/ -lprotobuf -lz
+
+
 all: $(BIN_DIR)/example
 
 # Assume a global copy of PB3 is available
@@ -27,11 +29,11 @@ $(CPP_DIR)/example.pb.h: $(SRC_DIR)/example.proto pre
 $(CPP_DIR)/example.pb.o: $(CPP_DIR)/example.pb.h $(CPP_DIR)/example.pb.cc pre
 	$(CXX) $(CXXFLAGS) -c -o $(CPP_DIR)/example.pb.o $(CPP_DIR)/example.pb.cc $(INCLUDES)
 
-$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(SRC_DIR)/stream.hpp pre
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(SRC_DIR)/stream.hpp $(CPP_DIR)/example.pb.h pre
 	$(CXX) $(CXXFLAGS) -c -o $@ $< $(INCLUDES)
 
 $(BIN_DIR)/example: $(SRC_DIR)/main.cpp $(OBJ_DIR)/main.o $(CPP_DIR)/example.pb.o pre
-	$(CXX) $(CXXFLAGS) $(LD_LIB_FLAGS) -o $@ $(CPP_DIR)/example.pb.o $(OBJ_DIR)/main.o $(INCLUDES)
+	$(CXX) $(CXXFLAGS) -o $@ $(CPP_DIR)/example.pb.o $(OBJ_DIR)/main.o $(INCLUDES) $(LD_LIB_FLAGS)
 
 pre:
 	mkdir -p bin
