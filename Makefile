@@ -27,10 +27,10 @@ $(CPP_DIR)/example.pb.h: $(SRC_DIR)/example.proto pre
 	protoc --proto_path=$(SRC_DIR) --cpp_out=$(CPP_DIR) $< 
 
 $(CPP_DIR)/example.pb.o: $(CPP_DIR)/example.pb.h $(CPP_DIR)/example.pb.cc pre
-	$(CXX) $(CXXFLAGS) -c -o $(CPP_DIR)/example.pb.o $(CPP_DIR)/example.pb.cc $(INCLUDES)
+	$(CXX) $(CXXFLAGS) -c -o $(CPP_DIR)/example.pb.o $(CPP_DIR)/example.pb.cc $(INCLUDES) $(LD_LIB_FLAGS)
 
 $(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(SRC_DIR)/stream.hpp $(CPP_DIR)/example.pb.h pre
-	$(CXX) $(CXXFLAGS) -c -o $@ $< $(INCLUDES)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< $(INCLUDES) $(LD_LIB_FLAGS)
 
 $(BIN_DIR)/example: $(SRC_DIR)/main.cpp $(OBJ_DIR)/main.o $(CPP_DIR)/example.pb.o pre
 	$(CXX) $(CXXFLAGS) -o $@ $(CPP_DIR)/example.pb.o $(OBJ_DIR)/main.o $(INCLUDES) $(LD_LIB_FLAGS)
