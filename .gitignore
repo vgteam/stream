@@ -1,4 +1,7 @@
 cpp/
+lib/
+bin/
+obj/
 
 # Compiled Object files
 *.slo
