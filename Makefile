@@ -10,8 +10,7 @@ LIB_DIR:=lib
 OBJ_DIR:=obj
 PROTO_PATH:=
 
-LIBS=cpp/example.pb.o main.o
-INCLUDES=-I./ -Icpp -I/usr/local/include -I/usr/local/include/google/protobuf
+INCLUDES=-I./ -Isrc -Iobj -Icpp -I/usr/local/include -I/usr/local/include/google/protobuf/
 LD_LIB_FLAGS=-L./ -L/usr/local/lib/ -lprotobuf -lz
 
 
@@ -27,9 +26,9 @@ $(CPP_DIR)/example.pb.h: $(SRC_DIR)/example.proto pre
 	protoc --proto_path=$(SRC_DIR) --cpp_out=$(CPP_DIR) $< 
 
 $(CPP_DIR)/example.pb.o: $(CPP_DIR)/example.pb.h $(CPP_DIR)/example.pb.cc pre
-	$(CXX) $(CXXFLAGS) -c -o $(CPP_DIR)/example.pb.o $(CPP_DIR)/example.pb.cc $(INCLUDES) $(LD_LIB_FLAGS)
+	$(CXX) $(CXXFLAGS) -c -o $(CPP_DIR)/example.pb.o $(CPP_DIR)/example.pb.cc $(INCLUDES)
 
-$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(SRC_DIR)/stream.hpp $(CPP_DIR)/example.pb.h pre
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(SRC_DIR)/stream.hpp pre
 	$(CXX) $(CXXFLAGS) -c -o $@ $< $(INCLUDES) $(LD_LIB_FLAGS)
 
 $(BIN_DIR)/example: $(SRC_DIR)/main.cpp $(OBJ_DIR)/main.o $(CPP_DIR)/example.pb.o pre

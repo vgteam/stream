@@ -1,5 +1,14 @@
 # stream
 
+## Prereqs
+Stream require a build of the latest protocol buffers library and zlib. If you have these installed,
+great! Build away. Otherwise, you'll have to install them.
+
+ZLIB should be present on any modern system and if not can be easily installed with a package manager.
+
+The best way to install protobuf is to build it from source and install to system-level directories.
+If you're building stream as part of VG, we bring it for you ;).
+
 ## compressed protobuf streams
 
 Problematically, the protobuf parser and libraries provide no
