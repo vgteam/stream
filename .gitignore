@@ -2,7 +2,7 @@ cpp/
 lib/
 bin/
 obj/
-
+include/
 # Compiled Object files
 *.slo
 *.lo
