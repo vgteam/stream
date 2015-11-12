@@ -1,35 +1,53 @@
-.PHONY: all clean test get-deps
+.PHONY: all clean test get-deps pre
 
 CXX=g++
 CXXFLAGS=-O3 -std=c++11 -fopenmp -g
-LIBS=cpp/example.pb.o main.o
-LIBPROTOBUF=protobuf/libprotobuf.a
-INCLUDES=-I./ -Icpp -Iprotobuf/build/include
-LDFLAGS=-L./ -Lprotobuf -lprotobuf -lz
 
-all: example
+CPP_DIR:=cpp
+BIN_DIR:=bin
+SRC_DIR:=src
+LIB_DIR:=lib
+OBJ_DIR:=obj
+PROTO_PATH:=
 
-$(LIBPROTOBUF):
-	cd protobuf && mkdir -p build && ./autogen.sh && ./configure --prefix=`pwd`/build/ && $(MAKE) && $(MAKE) install
-	cp protobuf/build/lib/libprotobuf.a protobuf/
+INCLUDES=-I./ -Isrc -Iobj -Icpp
+LD_LIB_FLAGS=-L./ -L/usr/local/lib/ -lprotobuf -lz
 
-cpp/example.pb.cc: cpp/example.pb.h
-cpp/example.pb.h: example.proto $(LIBPROTOBUF)
+
+all: $(BIN_DIR)/example
+
+# Assume a global copy of PB3 is available
+#$(LIBPROTOBUF):
+#	cd protobuf && mkdir -p build && ./autogen.sh && ./configure --prefix=`pwd`/build/ && $(MAKE) && $(MAKE) install
+#	cp protobuf/build/lib/libprotobuf.a protobuf/
+
+$(CPP_DIR)/example.pb.cc: $(CPP_DIR)/example.pb.h pre
+$(CPP_DIR)/example.pb.h: $(SRC_DIR)/example.proto pre
+	protoc --proto_path=$(SRC_DIR) --cpp_out=$(CPP_DIR) $< 
+
+$(CPP_DIR)/example.pb.o: $(CPP_DIR)/example.pb.h $(CPP_DIR)/example.pb.cc pre
+	$(CXX) $(CXXFLAGS) -c -o $(CPP_DIR)/example.pb.o $(CPP_DIR)/example.pb.cc $(INCLUDES)
+
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp $(SRC_DIR)/stream.hpp $(CPP_DIR)/example.pb.cc pre
+	$(CXX) $(CXXFLAGS) -c -o $@ $< $(INCLUDES) $(LD_LIB_FLAGS)
+
+$(BIN_DIR)/example: $(SRC_DIR)/main.cpp $(OBJ_DIR)/main.o $(CPP_DIR)/example.pb.o pre
+	$(CXX) $(CXXFLAGS) -o $@ $(CPP_DIR)/example.pb.o $(OBJ_DIR)/main.o $(INCLUDES) $(LD_LIB_FLAGS) && cp src/*.h* include/
+
+pre:
+	mkdir -p bin
+	mkdir -p lib
 	mkdir -p cpp
-	protobuf/build/bin/protoc example.proto --cpp_out=cpp
+	mkdir -p include
+	mkdir -p obj
 
-cpp/example.pb.o: cpp/example.pb.h cpp/example.pb.cc
-	$(CXX) $(CXXFLAGS) -c -o cpp/example.pb.o cpp/example.pb.cc $(INCLUDES)
-
-main.o: main.cpp stream.hpp  $(LIBPROTOBUF)
-	$(CXX) $(CXXFLAGS) -c -o main.o main.cpp $(INCLUDES)
-
-example: main.cpp $(LIBPROTOBUF) $(LIBS)
-	$(CXX) $(CXXFLAGS) -o example $(LIBS) $(INCLUDES) $(LDFLAGS)
-
+clobber: clean
+	rm -rf bin
+	rm -rf lib
+	rm -rf cpp
+	rm -rf obj
 clean:
 	rm -rf cpp
 	rm -f example
 	rm -f *.o
 	rm -f test.stream
-	cd protobuf && $(MAKE) clean && rm -rf build && rm -f libprotobuf.a
