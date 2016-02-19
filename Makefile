@@ -1,6 +1,6 @@
 .PHONY: all clean test get-deps pre
 
-CXX=g++
+CXX?=g++
 CXXFLAGS=-O3 -std=c++11 -fopenmp -g
 
 CPP_DIR:=cpp
