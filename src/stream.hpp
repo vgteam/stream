@@ -114,7 +114,7 @@ template <typename T>
 bool for_each(std::istream& in,
               std::function<void(T&)>& lambda) {
     std::function<void(uint64_t)> noop = [](uint64_t) { };
-    for_each(in, lambda, noop);
+    return for_each(in, lambda, noop);
 }
 
 template <typename T>
@@ -197,7 +197,7 @@ template <typename T>
 bool for_each_parallel(std::istream& in,
               std::function<void(T&)>& lambda) {
     std::function<void(uint64_t)> noop = [](uint64_t) { };
-    for_each_parallel(in, lambda, noop);
+    return for_each_parallel(in, lambda, noop);
 }
 
 }
